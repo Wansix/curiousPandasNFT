@@ -1,6 +1,7 @@
 {
   "scripts": {
-    "start": "npx hardhat run --network baobab scripts/deploy.ts"
+    "start": "npx hardhat run --network mainnet scripts/deploy.ts",
+    "start-baobab": "npx hardhat run --network baobab scripts/deploy.ts"
   },
   "devDependencies": {
     "hardhat": "^2.15.0",
