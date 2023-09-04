@@ -5,7 +5,6 @@ import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
 
-
 // Uncomment this line to use console.log
 // import "hardhat/console.sol";
 
@@ -16,6 +15,11 @@ contract CuriousPandasNFT is ERC721Enumerable, Ownable{
         uint public1;        
     }   
 
+     struct PandaTokenData {
+        uint256 pandaTokenId;
+        string pandaTokenHomeTown;        
+    }
+
     enum MintPhase {whitelist1, whitelist2, public1}
     enum Phase {init, whitelist1, waitingWhitelist2, whitelist2, waitingPublic1, public1, done}
     uint256 public stage = 1;
@@ -23,19 +27,19 @@ contract CuriousPandasNFT is ERC721Enumerable, Ownable{
     string public metadataURI = "https://curiouspandasnft.com/testJsons";    // 수정 필요        
 
     uint256 public totalNFTAmount = 3000;
-    uint256 public totalSaleNFTAmount = 50;
+    uint256 public totalSaleNFTAmount = 500;
     uint256 public initSupply = 0;
     address public mintDepositAddress;  
 
-    uint256[] public saleTotalAmount = [10, 10, 0]; // whitelist1 : 50, whitelist2 : 100  , public1은 constructor에서 생성   
-    uint256[] public saleRemainAmount = [0, 0, 0]; 
-    uint256[] public maxPerWallet = [10, 10, 30]; // whitelist1 : 1, whitelist2 : 2, public1 : 2    
-    uint256[] public maxPerTransaction = [10, 10, 10]; 
+    uint256[] public saleTotalAmount = [0, 0, 500]; // whitelist1 : 50, whitelist2 : 100  , public1은 constructor에서 생성   
+    uint256[] public saleRemainAmount = [0, 0, 500]; 
+    uint256[] public maxPerWallet = [2, 2, 1]; // whitelist1 : 1, whitelist2 : 2, public1 : 2    
+    uint256[] public maxPerTransaction = [2, 1, 1]; 
 
-    uint256[] public mintStartBlockNumber = [block.number + 10*60,block.number + 60*60,block.number + 130*60];
-    uint256[] public mintEndBlockNumber = [block.number + 30*60,block.number + 120*60,block.number + 200*60];
+    uint256[] public mintStartBlockNumber = [block.number + 60*60,block.number + 120*60,block.number + 180*60];
+    uint256[] public mintEndBlockNumber = [block.number + 110*60,block.number + 170*60,block.number + 360*60];
 
-    uint256 public _antibotInterval = 3;
+    uint256 public _antibotInterval = 3; // to edit
     
     
     mapping (MintPhase => uint256) public mintPriceList;
@@ -45,6 +49,8 @@ contract CuriousPandasNFT is ERC721Enumerable, Ownable{
     mapping (uint256 => mapping(address => bool)) public _whitelistedAddress2;
     mapping (address => uint256) public _lastCallBlockNumber;
 
+    mapping (uint256 => uint256) public homeTown;
+
     constructor(string memory _name, string memory _symbol) ERC721(_name, _symbol) {
         mintDepositAddress = owner();     
         saleTotalAmount[uint256(MintPhase.public1)] = totalSaleNFTAmount - saleTotalAmount[uint256(MintPhase.whitelist1)] - saleTotalAmount[uint256(MintPhase.whitelist2)];
@@ -53,14 +59,9 @@ contract CuriousPandasNFT is ERC721Enumerable, Ownable{
         {
             saleRemainAmount[i] = saleTotalAmount[i];
         }
-        
-        _whitelistedAddress[stage][owner()] = true;  //추후 삭제 필요
-        _whitelistedAddress[stage][0xC13dC1a385F525A28ACD1f5bB251198DeB4b3d09] = true;  //추후 삭제 필요
-        _whitelistedAddress[stage][0xDFc3a935e3e428413f0307FCceef074a5742879B] = true;  //추후 삭제 필요
-
-        _whitelistedAddress2[stage][0xA1390f1c2c97e528d48f3254f292a339f9014424] = true;  //추후 삭제 필요
-        _whitelistedAddress2[stage][0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266] = true;  //추후 삭제 필요
     }    
+
+  
 
     function getDatas() public view returns (uint256, uint256, Phase, uint256, uint256, uint256, uint256[] memory, uint256[] memory, uint256[] memory, uint256[] memory, uint256[] memory, uint256[] memory){
         return (
@@ -197,6 +198,14 @@ contract CuriousPandasNFT is ERC721Enumerable, Ownable{
         return 2; // public1
     }
 
+    function getHomeTown(uint256 tokenId) public view returns (string memory){
+        uint256 _hometown = homeTown[tokenId];
+        if(_hometown == 0) return "INF";
+        else if(_hometown == 1) return "FRE";
+        else if(_hometown == 2) return "WAL";
+        else return "CUR";
+    }
+
     // 수동으로 phase를 옮겨주어야함.
     function advancePhase() public onlyOwner{        
         if(currentPhase != Phase.done){
@@ -280,6 +289,9 @@ contract CuriousPandasNFT is ERC721Enumerable, Ownable{
     function mintNFT() private { 
         uint tokenId = totalSupply() + 1;
         updateAmount();
+        
+        uint256 _homeTown = uint256(keccak256(abi.encodePacked(block.timestamp, msg.sender, tokenId))) % 4; // 0 ~ 3
+        homeTown[tokenId] = _homeTown;
         _mint(msg.sender, tokenId);        
     }   
 
@@ -329,5 +341,23 @@ contract CuriousPandasNFT is ERC721Enumerable, Ownable{
 
     function setMintDeposit(address _mintDepositAddress) public onlyOwner{        
         mintDepositAddress = _mintDepositAddress;
+    }
+
+    function getPandaTokens(address _pandaTokenOwner) view public returns (PandaTokenData[] memory){
+        uint256 balanceLength = balanceOf(_pandaTokenOwner);
+        
+        require(balanceLength !=0, "Owner did not have token.");
+
+        PandaTokenData[] memory pandaTokenData = new PandaTokenData[](balanceLength);
+
+        for(uint256 i = 0; i < balanceLength; i++){
+            uint256 pandaTokenId = tokenOfOwnerByIndex(_pandaTokenOwner,i);
+            string memory pandaTokenHomeTown = getHomeTown(pandaTokenId);
+            
+
+            pandaTokenData[i] = PandaTokenData(pandaTokenId, pandaTokenHomeTown);
+        }
+
+        return pandaTokenData;
     }
 }
