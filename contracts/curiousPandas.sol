@@ -31,8 +31,8 @@ contract CuriousPandasNFT is ERC721Enumerable, Ownable{
     uint256 public initSupply = 0;
     address public mintDepositAddress;  
 
-    uint256[] public saleTotalAmount = [0, 0, 500]; // whitelist1 : 50, whitelist2 : 100  , public1은 constructor에서 생성   
-    uint256[] public saleRemainAmount = [0, 0, 500]; 
+    uint256[] public saleTotalAmount = [100, 100, 0]; // whitelist1 : 50, whitelist2 : 100  , public1은 constructor에서 생성   
+    uint256[] public saleRemainAmount = [0, 0, 0]; 
     uint256[] public maxPerWallet = [2, 2, 1]; // whitelist1 : 1, whitelist2 : 2, public1 : 2    
     uint256[] public maxPerTransaction = [2, 1, 1]; 
 
@@ -40,6 +40,7 @@ contract CuriousPandasNFT is ERC721Enumerable, Ownable{
     uint256[] public mintEndBlockNumber = [block.number + 110*60,block.number + 170*60,block.number + 360*60];
 
     uint256 public _antibotInterval = 3; // to edit
+    address public controlContract;
     
     
     mapping (MintPhase => uint256) public mintPriceList;
@@ -50,6 +51,9 @@ contract CuriousPandasNFT is ERC721Enumerable, Ownable{
     mapping (address => uint256) public _lastCallBlockNumber;
 
     mapping (uint256 => uint256) public homeTown;
+    mapping (uint256 => uint256) public previousBlockTime;
+
+    
 
     constructor(string memory _name, string memory _symbol) ERC721(_name, _symbol) {
         mintDepositAddress = owner();     
@@ -59,9 +63,22 @@ contract CuriousPandasNFT is ERC721Enumerable, Ownable{
         {
             saleRemainAmount[i] = saleTotalAmount[i];
         }
+        controlContract = 0x471074525ece022590171F06DF12154F162d7D3C; // test
     }    
 
-  
+    function getEnergy(uint256 number) public view returns (uint256)
+    {
+        return block.number - previousBlockTime[number];
+    }
+
+    function resetEnergy(uint256 number, uint256 energy) public {
+        require(msg.sender == controlContract, "not authority");
+        previousBlockTime[number] = previousBlockTime[number] + energy;
+    }
+
+    function setControlContract(address _controlContract) public onlyOwner {
+        controlContract = _controlContract;
+    }
 
     function getDatas() public view returns (uint256, uint256, Phase, uint256, uint256, uint256, uint256[] memory, uint256[] memory, uint256[] memory, uint256[] memory, uint256[] memory, uint256[] memory){
         return (
@@ -292,6 +309,7 @@ contract CuriousPandasNFT is ERC721Enumerable, Ownable{
         
         uint256 _homeTown = uint256(keccak256(abi.encodePacked(block.timestamp, msg.sender, tokenId))) % 4; // 0 ~ 3
         homeTown[tokenId] = _homeTown;
+        previousBlockTime[tokenId] = block.number;
         _mint(msg.sender, tokenId);        
     }   
 
