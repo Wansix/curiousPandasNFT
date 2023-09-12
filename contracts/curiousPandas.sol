@@ -24,16 +24,16 @@ contract CuriousPandasNFT is ERC721Enumerable, Ownable{
     enum Phase {init, whitelist1, waitingWhitelist2, whitelist2, waitingPublic1, public1, done}
     uint256 public stage = 1;
     Phase public currentPhase = Phase.init;   
-    string public metadataURI = "https://curiouspandasnft.com/testJsons";    // 수정 필요        
+    string public metadataURI = "https://curiouspandasnft.com/cpd_jsons";    // 수정 필요        
 
     uint256 public totalNFTAmount = 3000;
     uint256 public totalSaleNFTAmount = 500;
     uint256 public initSupply = 0;
     address public mintDepositAddress;  
 
-    uint256[] public saleTotalAmount = [100, 100, 0]; // whitelist1 : 50, whitelist2 : 100  , public1은 constructor에서 생성   
+    uint256[] public saleTotalAmount = [150, 150, 0]; // whitelist1 : 50, whitelist2 : 100  , public1은 constructor에서 생성   
     uint256[] public saleRemainAmount = [0, 0, 0]; 
-    uint256[] public maxPerWallet = [2, 2, 1]; // whitelist1 : 1, whitelist2 : 2, public1 : 2    
+    uint256[] public maxPerWallet = [2, 1, 1]; // whitelist1 : 1, whitelist2 : 2, public1 : 2    
     uint256[] public maxPerTransaction = [2, 1, 1]; 
 
     uint256[] public mintStartBlockNumber = [block.number + 60*60,block.number + 120*60,block.number + 180*60];
@@ -62,8 +62,7 @@ contract CuriousPandasNFT is ERC721Enumerable, Ownable{
         for(uint i = 0; i < 3; i++)
         {
             saleRemainAmount[i] = saleTotalAmount[i];
-        }
-        controlContract = 0x471074525ece022590171F06DF12154F162d7D3C; // test
+        }        
     }    
 
     function getEnergy(uint256 number) public view returns (uint256)

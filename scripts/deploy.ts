@@ -1,11 +1,12 @@
 import { ethers } from "hardhat";
 import fs from "fs";
+
 async function main() {
   const [owner] = await ethers.getSigners();
   const curiousPandas = await ethers.getContractFactory("CuriousPandasNFT");
 
-  // const NFTContract = await curiousPandas.deploy("curiousPandas", "CPD");
-  const NFTContract = await curiousPandas.deploy("testpd", "tpd");
+  const NFTContract = await curiousPandas.deploy("curiousPandas", "CPD");
+  // const NFTContract = await curiousPandas.deploy("testpd", "tpd");
   const deployAddress = await NFTContract.getAddress();
   console.log("curiousPandas NFT contract : ", deployAddress);
 
