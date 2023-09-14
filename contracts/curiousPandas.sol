@@ -33,7 +33,7 @@ contract CuriousPandasNFT is ERC721Enumerable, Ownable{
 
     uint256[] public saleTotalAmount = [150, 150, 0]; // whitelist1 : 50, whitelist2 : 100  , public1은 constructor에서 생성   
     uint256[] public saleRemainAmount = [0, 0, 0]; 
-    uint256[] public maxPerWallet = [2, 1, 1]; // whitelist1 : 1, whitelist2 : 2, public1 : 2    
+    uint256[] public maxPerWallet = [2, 2, 1]; // whitelist1 : 1, whitelist2 : 2, public1 : 2    
     uint256[] public maxPerTransaction = [2, 1, 1]; 
 
     uint256[] public mintStartBlockNumber = [block.number + 60*60,block.number + 120*60,block.number + 180*60];
