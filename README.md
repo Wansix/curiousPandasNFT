@@ -108,6 +108,19 @@ enum Phase {
 
 ## 🌐 프로젝트 정보
 
+### 배포 정보
+- **컨트랙트 주소**: `0xEce5e2eA365a943629A7e18004861ebce24214Fa`
+- **네트워크**: Klaytn Cypress (메인넷)
+- **컨트랙트 이름**: CuriousPandasNFT
+- **마켓플레이스**: [OKX NFT 마켓플레이스](https://web3.okx.com/nft/collection/kaia/curiouspandas)
+
+### 컬렉션 현황
+- **총 공급량**: 540개 NFT
+- **홀더 수**: 151개 지갑
+- **고유 홀더 비율**: 27.96%
+- **총 거래량**: 1.92K KAIA
+- **네트워크**: KAIA (Klaytn)
+
 ### 랜딩 페이지
 - **웹사이트**: [Curious Pandas 랜딩 페이지](https://kkad.creatorlink.net/)
 - **커뮤니티**: Discord, 밤부숲 플랫폼
