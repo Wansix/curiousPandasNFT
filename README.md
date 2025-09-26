@@ -125,6 +125,10 @@ enum Phase {
 - **웹사이트**: [Curious Pandas 랜딩 페이지](https://kkad.creatorlink.net/)
 - **커뮤니티**: Discord, 밤부숲 플랫폼
 
+### 관련 레포지토리
+- **Curious Pandas Minting Site**  
+  GitHub: [curiousPandasMint](https://github.com/Wansix/curiousPandasMint)  
+
 ### 프로젝트 컨셉
 > "Curious Pandas는 3천개의 서로 다른 모습의 PFP로 이루어진 판다 모양의 NFT입니다. 홀더들은 NFT 정보 커뮤니티 플랫폼 밤부숲을 통해 C2E적인 로드맵과 밤부숲의 성장에 따른 패시브한 로드맵의 혜택을 받아볼 수 있습니다. 로드맵이 모두 달성된 후에는 Curious Pandas의 밤부숲으로부터의 독립에 관한 거버넌스 투표를 진행할 예정입니다. 
 "
